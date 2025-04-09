@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>인물 클러스터 {{ cluster_id }} 상세보기</title>
+    <!-- 부트스트랩 CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <style>
+        .img-thumbnail-custom {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <h1>인물 클러스터 {{ cluster_id }} 상세보기</h1>
+    <div id="cluster-name-area" class="mb-3">
+        <!-- 현재 클러스터 라벨 표시 -->
+        <h3 id="current-label">이름: {{ cluster[0].cluster_label if cluster[0].cluster_label|default('') != "" else cluster_id }}</h3>
+        <!-- 클러스터 라벨 업데이트 폼 -->
+        <form id="update-label-form">
+            <div class="form-group">
+                <label for="new-cluster-label">새 이름 입력:</label>
+                <input type="text" class="form-control" id="new-cluster-label" placeholder="예: 홍길동">
+            </div>
+            <button type="submit" class="btn btn-primary">이름 업데이트</button>
+            <a href="/" class="btn btn-secondary">홈으로 이동</a>
+        </form>
+    </div>
+    <div class="row">
+        {% for image in cluster %}
+        <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-stretch">
+            <div class="card mb-4 w-100">
+                <img src="{{ image.filepath }}" class="card-img-top img-thumbnail-custom" alt="{{ image.filename }}">
+                <div class="card-body">
+                    <!-- 카드 제목: 클러스터 라벨 (파일명이 아니라) -->
+                    <h5 class="card-title">{{ image.cluster_label }}</h5>
+                    <p class="card-text">
+                        {% if image.inference.face and image.inference.face.face_count > 0 %}
+                            얼굴 인식됨 ({{ image.inference.face.face_count }})
+                        {% else %}
+                            추론 결과 없음
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- jQuery, Popper.js, 부트스트랩 JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function(){
+    $("#update-label-form").submit(function(e){
+        e.preventDefault();
+        var newLabel = $("#new-cluster-label").val().trim();
+        if(newLabel === ""){
+            alert("새 이름을 입력하세요.");
+            return;
+        }
+        var clusterId = "{{ cluster_id }}";
+        $.ajax({
+            type: "POST",
+            url: "/update_cluster_label",
+            contentType: "application/json",
+            data: JSON.stringify({
+                cluster_id: clusterId,
+                cluster_label: newLabel
+            }),
+            success: function(response) {
+                alert("클러스터 이름이 업데이트되었습니다.");
+                $("#current-label").text("이름: " + response.cluster_label);
+                $(".card-title").text(response.cluster_label);
+            },
+            error: function(err) {
+                console.error("오류 발생:", err);
+                alert("클러스터 이름 업데이트에 실패했습니다.");
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

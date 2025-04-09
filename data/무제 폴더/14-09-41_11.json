@@ -1,0 +1,37 @@
+{
+    "face": {
+        "face_count": 0,
+        "face_embeddings": []
+    },
+    "hand": {
+        "hand_count": 0,
+        "hand_landmarks": []
+    },
+    "body": {
+        "landmark_count": 0,
+        "landmarks": []
+    },
+    "skin": {
+        "predicted_label": "bkl",
+        "predicted_label_kor": "양성 각화증 유사 병변",
+        "confidence": 0.5747992992401123,
+        "raw_output": [
+            [
+                0.004352198448032141,
+                0.0008776418399065733,
+                0.5747992992401123,
+                0.00883946381509304,
+                0.2771959900856018,
+                0.01939529925584793,
+                0.11454006284475327
+            ]
+        ]
+    },
+    "inference_times": {
+        "face": 0.026592742651700974,
+        "hand": 0.03715931996703148,
+        "body": 0.02134934440255165,
+        "skin": 0.02752646803855896
+    },
+    "total_inference_time": 0.11262787505984306
+}
